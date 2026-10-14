@@ -1,0 +1,37 @@
+name: Build APK Tu File ZIP
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 1. Lấy code về
+      uses: actions/checkout@v4
+
+    - name: 2. Giải nén file code.zip
+      run: unzip code.zip -d app_folder/
+
+    - name: 3. Cài đặt hệ thống
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+
+    - name: 4. Bắt đầu Build APK
+      run: |
+        cd app_folder
+        gradle wrapper
+        chmod +x gradlew
+        ./gradlew assembleDebug
+
+    - name: 5. Lưu file APK để tải về
+      uses: actions/upload-artifact@v4
+      with:
+        name: Ung-Dung-Tro-Ly
+        path: app_folder/app/build/outputs/apk/debug/app-debug.apk
+        
